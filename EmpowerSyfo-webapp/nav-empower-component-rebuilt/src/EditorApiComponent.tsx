@@ -1029,9 +1029,7 @@ export class EditorApiComponent extends Component<editorApiPathProps | editorApi
 	            const tokenResponse = await axios.get(securityTokenURL.href, {withCredentials: true});
 	            const tokenBody = tokenResponse.data.body;
 				// These consts are the default values when we tried without proper properties file
-				//const dataOtdsUserPass = JSON.stringify({"userName": "otadmin@otds.admin","password": "xxx"});
-				//const dataOtdsUserPass = JSON.stringify({"userName":"tenantadmin@strs.role","password":"Edp_Exstream05!"});
-				//const urlOtds = new URL("http://localhost:9999/otdsws/rest/authentication/credentials");
+				
 				var otdsApiUrl = "";
 				var otdsApiUserName = "";
 				var otdsApiPassword = "";
