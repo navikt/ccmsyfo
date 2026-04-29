@@ -1,0 +1,59 @@
+package no.nav.syfo.empower.webapp;
+
+import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+
+@SwaggerDefinition
+@Api(tags = "Operations on EWS Exstream Engine")
+@RestController
+@RequestMapping(value = "api/v1")
+public class RestApiController {
+    
+    
+    @Value("${empower.url}")
+    private String empowerLocation;
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestApiController.class);
+
+    
+    @ApiOperation(value = "Get Empower location",
+                  notes = "Get the URL for the Empower application",
+                  httpMethod = "GET",
+                  produces = "application/json")
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "EmpowerApplicationResponse received")
+        , @ApiResponse(code = 500, message = "Unexpected error")})
+    @RequestMapping(value = "/getempowerlocation", method = RequestMethod.GET, produces = "application/json")
+    public @ResponseBody String getEmpowerlocation() {
+        LOGGER.info("Receiving the 'getEmpowerlocation' request..");
+        
+        return "{ \"empowerLocation\": \"" + empowerLocation + "\" }";
+    }
+
+    
+    @ExceptionHandler(HttpClientErrorException.class)
+    public final ResponseEntity<String> handleHttpClientErrorException(HttpClientErrorException ex) {
+        LOGGER.error(ex.getClass().getName());
+        LOGGER.error("Message: {}", ex.getMessage());
+        LOGGER.error("ResponseBody: {}", ex.getResponseBodyAsString());
+        LOGGER.error("StatusText: {}", ex.getStatusText());
+        
+        return new ResponseEntity<>(ex.getResponseBodyAsString(), HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public final ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        LOGGER.error(ex.getClass().getName());
+        LOGGER.error("Message: {}", ex.getMessage());
+        LOGGER.error(ex.toString());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+}
